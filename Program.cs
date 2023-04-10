@@ -87,7 +87,44 @@ public class BlogPosts
 
     private static void CreatePost(BloggingContext db)
     {
-        // var query = db.Blogs.OrderBy(b => b.BlogId);
+        var query = db.Blogs.OrderBy(b => b.BlogId);
+
+        Console.WriteLine("Please select the blog you would like to post to.");
+        foreach (var item in query)
+        {
+            Console.WriteLine($"{item.BlogId}) {item.Name}");
+        }
+        
+        string response = Console.ReadLine();
+        int number;
+        if (!int.TryParse(response, out number))
+        {
+            Logger.Error("Invalid blog ID: {response}", response);
+            return;
+        }
+
+        Blog blog = query.Where(b => b.BlogId == number).First();
+        if (blog == null)
+        {
+            Logger.Error("There are no blogs saved with the ID {response}", response);
+            return;
+        }
+
+        Console.WriteLine("Enter the post title");
+        string title = Console.ReadLine();
+        if (title == "")
+        {
+            Logger.Error("Post title cannot be null");
+            return;
+        }
+
+        Console.WriteLine("Enter the post content");
+        string content = Console.ReadLine();
+
+        Post post = new Post { Title = title, Content = content, BlogId = blog.BlogId, Blog = blog };
+
+        db.AddPost(post);
+        Logger.Info("Post added - {title}", title);
     }
 
     private static void DisplayPosts(BloggingContext db)
