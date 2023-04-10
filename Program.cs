@@ -6,6 +6,7 @@ public class BlogPosts
     public static Logger Logger = LogManager.LoadConfiguration(Directory.GetCurrentDirectory() + "\\nlog.config").GetCurrentClassLogger();
     static void Main(string[] args)
     {
+        Logger.Info("Program started");
         Console.WriteLine("Welcome!");
 
         BloggingContext db = new BloggingContext();
@@ -18,9 +19,9 @@ public class BlogPosts
             Console.WriteLine("2) Add blog");
             Console.WriteLine("3) Create post");
             Console.WriteLine("4) Display posts");
-            Console.WriteLine("5) Exit the program");
+            Console.WriteLine("Enter q to quit");
 
-            string response = Console.ReadLine();
+            string response = Console.ReadLine().ToLower();
             try
             {
                 switch (response)
@@ -32,12 +33,12 @@ public class BlogPosts
                         CreateBlog(db);
                         break;
                     case "3":
-                        Console.WriteLine("[Create post]");
+                        CreatePost(db);
                         break;
                     case "4":
                         Console.WriteLine("[Display posts]");
                         break;
-                    case "5":
+                    case "q":
                         loop = false;
                         break;
                     default:
@@ -49,6 +50,10 @@ public class BlogPosts
             {
                 Logger.Error(e.Message);
             }
+            finally
+            {
+                Console.WriteLine();
+            }
         }
 
         Console.WriteLine("Have a good one!");
@@ -58,7 +63,7 @@ public class BlogPosts
     {
         var query = db.Blogs.OrderBy(b => b.Name);
 
-        Console.WriteLine("All blogs in the database:");
+        Console.WriteLine($"{query.Count()} blogs returned: ");
         foreach (var item in query)
         {
             Console.WriteLine(item.Name);
@@ -67,11 +72,26 @@ public class BlogPosts
 
     private static void CreateBlog(BloggingContext db)
     {
-        Console.Write("Enter a name for the new Blog: ");
+        Console.Write("Enter a name for a new Blog: ");
         string name = Console.ReadLine();
+        if (name == "")
+        {
+            Logger.Error("Blog name cannot be null");
+            return;
+        }
 
         Blog blog = new Blog { Name = name };
         db.AddBlog(blog);
         Logger.Info("Blog added - {name}", name);
+    }
+
+    private static void CreatePost(BloggingContext db)
+    {
+        // var query = db.Blogs.OrderBy(b => b.BlogId);
+    }
+
+    private static void DisplayPosts(BloggingContext db)
+    {
+
     }
 }
