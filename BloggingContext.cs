@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 public class BloggingContext : DbContext
 {
@@ -11,9 +13,13 @@ public class BloggingContext : DbContext
         this.SaveChanges();
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder builder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // TODO: Configure login credentials
+        var configuration =  new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.json");
+
+        var config = configuration.Build();
+        optionsBuilder.UseSqlServer(@config["BlogsConsole:ConnectionString"]);
     }
 
 }
