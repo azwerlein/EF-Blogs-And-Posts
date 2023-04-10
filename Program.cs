@@ -36,7 +36,7 @@ public class BlogPosts
                         CreatePost(db);
                         break;
                     case "4":
-                        Console.WriteLine("[Display posts]");
+                        DisplayPosts(db);
                         break;
                     case "q":
                         loop = false;
@@ -103,7 +103,7 @@ public class BlogPosts
             return;
         }
 
-        Blog blog = query.Where(b => b.BlogId == number).First();
+        Blog blog = query.Where(b => b.BlogId == number).FirstOrDefault();
         if (blog == null)
         {
             Logger.Error("There are no blogs saved with the ID {response}", response);
@@ -121,14 +121,43 @@ public class BlogPosts
         Console.WriteLine("Enter the post content");
         string content = Console.ReadLine();
 
-        Post post = new Post { Title = title, Content = content, BlogId = blog.BlogId, Blog = blog };
-
+        Post post = new Post { Title = title, Content = content, BlogId = blog.BlogId };
+        // blog.Posts.Add(post);
         db.AddPost(post);
+
         Logger.Info("Post added - {title}", title);
     }
 
     private static void DisplayPosts(BloggingContext db)
     {
+        IQueryable<Blog> query = db.Blogs.OrderBy(b => b.BlogId);
 
+        Console.WriteLine("Select the blog's posts to display:");
+        Console.WriteLine("0) Posts from all blogs");
+        foreach (var item in query)
+        {
+            Console.WriteLine($"{item.BlogId}) Posts from {item.Name}");
+        }
+
+        string response = Console.ReadLine();
+        int number = 0; // If there's an invalid response, default to 0.
+        int.TryParse(response, out number);
+
+        IQueryable<Post> posts;
+        if (number != 0)
+        {
+            posts = db.Posts.Where(b => b.BlogId == number);
+            foreach (var post in posts)
+            {
+                Console.WriteLine($"Blog: {post.Blog.Name}");
+                Console.WriteLine($"Title: {post.Title}");
+                Console.WriteLine($"Content: {post.Content}");
+                Console.WriteLine();
+            }
+        } else {
+            // TODO: No Posts
+        }
+
+        
     }
 }
