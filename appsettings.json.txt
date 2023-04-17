@@ -1,5 +1,5 @@
 {
-  "BloggingContext": {
+  "BlogsConsole": {
     "ConnectionString": "Server=bitsql.wctc.edu;Database=Blogs_##_XXX;User ID=YYY;Password=ZZZ"
   },
   "_comment": {
