@@ -94,7 +94,7 @@ public class BlogPosts
         {
             Console.WriteLine($"{item.BlogId}) {item.Name}");
         }
-        
+
         string response = Console.ReadLine();
         int number;
         if (!int.TryParse(response, out number))
@@ -147,6 +147,18 @@ public class BlogPosts
         if (number != 0)
         {
             posts = db.Posts.Where(b => b.BlogId == number);
+        }
+        else
+        {
+            posts = db.Posts;
+        }
+
+        if (posts.Count() == 0)
+        {
+            Console.WriteLine("There are no posts in this blog.\n");
+        }
+        else
+        {
             foreach (var post in posts)
             {
                 Console.WriteLine($"Blog: {post.Blog.Name}");
@@ -154,10 +166,7 @@ public class BlogPosts
                 Console.WriteLine($"Content: {post.Content}");
                 Console.WriteLine();
             }
-        } else {
-            // TODO: No Posts
         }
 
-        
     }
 }
